@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        base: '#0b0f1a',
+        panel: '#111827',
+        soft: '#1f2937',
+        accent: '#8b5cf6',
+        accentSoft: '#a78bfa'
+      },
+      fontFamily: {
+        poppins: ['Poppins', 'sans-serif']
+      }
+    }
+  }
+}
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="font-poppins bg-base text-slate-200 min-h-screen">
+
+<!-- WELCOME LOADER -->
+<div id="welcomeLoader"
+     class="fixed inset-0 z-[999]
+            flex flex-col items-center justify-center
+            bg-base transition-opacity duration-700">
+
+    <div class="w-16 h-16 rounded-full border-4
+                border-accent/30 border-t-accent
+                animate-spin mb-6"></div>
+
+    <h2 class="text-xl font-semibold">Selamat Datang</h2>
+    <p class="text-sm text-slate-400 mt-2">
+        Sistem Inventaris Skensa
+    </p>
+</div>
+
+<!-- REDIRECT LOADER -->
+<div id="redirectLoader"
+     class="fixed inset-0 z-[999]
+            hidden items-center justify-center
+            bg-black/60 backdrop-blur-sm">
+
+    <div class="bg-panel rounded-2xl px-8 py-6
+                flex flex-col items-center shadow-2xl">
+
+        <div class="w-10 h-10 rounded-full border-4
+                    border-accent/30 border-t-accent
+                    animate-spin mb-4"></div>
+
+        <p class="text-sm font-medium">
+            Anda akan dialihkan... 
+            Jika Stuck Refresh Halamanya ya
+        </p>
+    </div>
+</div>
+
+<div class="min-h-screen px-6 py-8">
+
+<!-- HEADER -->
+<header class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
+
+    <div>
+        <h1 class="text-2xl font-semibold tracking-tight">
+            Peminjaman Barang
+        </h1>
+        <p class="text-sm text-slate-400 mt-1">
+            Sistem Inventaris Skensa
+        </p>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="w-full md:w-80 relative">
+        <input id="searchInput"
+               type="text"
+               placeholder="Cari barang..."
+               class="w-full bg-panel border border-white/10
+                      rounded-xl px-4 py-3 text-sm
+                      focus:outline-none focus:ring-2 focus:ring-accent/40">
+    </div>
+
+    <!-- MENU -->
+    <div class="relative">
+        <button id="burger"
+            class="w-12 h-12 rounded-xl bg-panel border border-white/10
+                   flex flex-col items-center justify-center gap-1.5
+                   hover:bg-soft transition">
+            <span class="w-5 h-0.5 bg-slate-300 rounded"></span>
+            <span class="w-5 h-0.5 bg-slate-300 rounded"></span>
+            <span class="w-5 h-0.5 bg-slate-300 rounded"></span>
+        </button>
+
+        <div id="menuDropdown"
+            class="absolute right-0 mt-3 w-56 rounded-xl
+                   bg-panel border border-white/10 shadow-2xl
+                   opacity-0 scale-95 pointer-events-none
+                   transition-all duration-200">
+
+            <a href="{% url 'library:daftar_barang' %}"
+               onclick="redirect(event,this.href)"
+               class="block px-5 py-3 text-sm hover:bg-soft">
+               Daftar Barang
+            </a>
+
+            <a href="{% url 'library:pengembalian_buku' %}"
+               onclick="redirect(event,this.href)"
+               class="block px-5 py-3 text-sm hover:bg-soft">
+               Pengembalian
+            </a>
+
+            <a href="{% url 'library:status_peminjaman' %}"
+               onclick="redirect(event,this.href)"
+               class="block px-5 py-3 text-sm hover:bg-soft">
+               Status Peminjaman
+            </a>
+
+            <div class="border-t border-white/10"></div>
+
+            <a href="{% url 'library:login' %}"
+               onclick="redirect(event,this.href)"
+               class="block px-5 py-3 text-sm text-red-400 hover:bg-red-500/10">
+               Logout
+            </a>
+        </div>
+    </div>
+</header>
+
+<!-- GRID -->
+<section id="barangGrid"
+         class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+
+{% for buku in barang_list %}
+<div data-name="{{ buku.nama_barang|lower }}"
+     class="barang-card group rounded-2xl bg-panel border border-white/10
+            hover:border-accent/40 transition shadow-lg">
+
+    {% if buku.gambar %}
+    <img src="{{ buku.gambar.url }}"
+         class="h-56 w-full object-cover rounded-t-2xl">
+    {% else %}
+    <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f"
+         class="h-56 w-full object-cover rounded-t-2xl">
+    {% endif %}
+
+    <div class="p-5 text-center">
+        <h3 class="text-sm font-medium">{{ buku.nama_barang }}</h3>
+        <p class="text-xs text-slate-400 mt-1">{{ buku.kategori.nama }}</p>
+
+        <span class="inline-block mt-3 px-4 py-1.5 rounded-full text-xs font-semibold
+        {% if buku.stok == 0 %}
+            bg-red-500/15 text-red-400
+        {% else %}
+            bg-emerald-500/15 text-emerald-400
+        {% endif %}">
+            {% if buku.stok == 0 %}Stok Habis{% else %}Stok: {{ buku.stok }}{% endif %}
+        </span>
+
+        <div class="flex justify-center gap-3 mt-5">
+            <button onclick="openModal('{{ buku.id }}','{{ buku.nama_barang }}')"
+                    class="px-4 py-2 rounded-lg bg-accent text-white text-xs font-semibold">
+                Pinjam
+            </button>
+
+            <a href="{% url 'library:ulasan' buku.id %}"
+               class="px-4 py-2 rounded-lg bg-soft text-xs font-semibold">
+                Ulasan
+            </a>
+        </div>
+    </div>
+</div>
+{% endfor %}
+</section>
+
+<!-- EMPTY STATE -->
+<div id="emptyState"
+     class="hidden flex flex-col items-center justify-center mt-20 text-center">
+    <div class="text-6xl mb-4">📦</div>
+    <h3 class="text-lg font-semibold">Barang tidak ditemukan</h3>
+    <p class="text-sm text-slate-400 mt-2">
+        Coba kata kunci lain
+    </p>
+</div>
+
+</div>
+
+<!-- MODAL -->
+<div id="modal"
+     class="fixed inset-0 bg-black/60 backdrop-blur-sm
+            hidden items-center justify-center z-50">
+
+    <div class="bg-panel rounded-2xl w-full max-w-md p-6">
+        <h3 class="text-lg font-semibold mb-2" id="modalTitle"></h3>
+        <p class="text-sm text-slate-400 mb-6">
+            Yakin ingin meminjam barang ini?
+        </p>
+
+        <div class="flex justify-end gap-3">
+            <button onclick="closeModal()"
+                    class="px-4 py-2 rounded-lg bg-soft text-sm">
+                Batal
+            </button>
+
+            <a id="confirmPinjam"
+               class="px-4 py-2 rounded-lg bg-accent text-sm font-semibold text-white">
+               Pinjam
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+/* WELCOME */
+window.addEventListener('load',()=>{
+    const l=document.getElementById('welcomeLoader');
+    setTimeout(()=>{
+        l.classList.add('opacity-0');
+        setTimeout(()=>l.remove(),700);
+    },1200);
+});
+
+/* MENU */
+const burger=document.getElementById('burger');
+const menu=document.getElementById('menuDropdown');
+burger.onclick=()=>{
+    menu.classList.toggle('opacity-0');
+    menu.classList.toggle('pointer-events-none');
+    menu.classList.toggle('scale-95');
+}
+
+/* REDIRECT */
+function redirect(e,url){
+    e.preventDefault();
+    const l=document.getElementById('redirectLoader');
+    l.classList.remove('hidden');
+    l.classList.add('flex');
+    setTimeout(()=>window.location.href=url,800);
+}
+
+/* SEARCH */
+const searchInput=document.getElementById('searchInput');
+const cards=document.querySelectorAll('.barang-card');
+const empty=document.getElementById('emptyState');
+let t;
+
+searchInput.addEventListener('input',()=>{
+    clearTimeout(t);
+    t=setTimeout(()=>{
+        let v=searchInput.value.toLowerCase();
+        let c=0;
+        cards.forEach(card=>{
+            if(card.dataset.name.includes(v)){
+                card.classList.remove('hidden');c++;
+            }else card.classList.add('hidden');
+        });
+        empty.classList.toggle('hidden',c!==0);
+    },300);
+});
+
+/* MODAL */
+function openModal(id,name){
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    modalTitle.innerText=name;
+    confirmPinjam.href=`/pinjam/${id}/`;
+}
+function closeModal(){
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+}
+</script>
+
+</body>
+</html>

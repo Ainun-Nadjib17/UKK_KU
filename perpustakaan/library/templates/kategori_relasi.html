@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>{{ kategori.nama }}</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #0f0f1a 0%, #1a1b2e 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 24px;
+    background-attachment: fixed;
+}
+
+h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 2.5rem;
+    background: linear-gradient(90deg, #a5b4fc, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+}
+
+/* GRID - lebih rapi & centered */
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+    max-width: 1400px;
+}
+
+/* CARD - lebih clean */
+li {
+    background: rgba(30, 41, 59, 0.7);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: 
+        0 10px 30px rgba(0,0,0,0.4),
+        inset 0 1px 1px rgba(255,255,255,0.05);
+    transition: all 0.4s ease;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+li:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 30px 60px -15px rgba(0,0,0,0.55);
+}
+
+/* GAMBAR - SUPER RAPI: aspect-ratio portrait book + contain + centered */
+.card-image-container {
+    width: 100%;
+    aspect-ratio: 2 / 1;           /* Rasio standar sampul buku (portrait) */
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgba(0,0,0,0.35);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+li img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;           /* <-- KUNCI: gambar utuh, tidak dipotong/distorsi */
+    object-position: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+}
+
+/* TEXT - lebih rapi */
+li strong {
+    font-size: 1.12rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #f1f5f9;
+    line-height: 1.3;
+    text-align: center;
+}
+
+li div {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: #cbd5e1;
+    opacity: 0.9;
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+/* EMPTY STATE */
+p.empty {
+    text-align: center;
+    font-size: 1.25rem;
+    color: #94a3b8;
+    padding: 80px 20px;
+    opacity: 0.85;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    ul {
+        grid-template-columns: 1fr;
+        gap: 28px;
+    }
+    
+    .card-image-container {
+        aspect-ratio: 2 / 3;
+    }
+}
+</style>
+</head>
+<body>
+
+<h2>{{ kategori.nama }}</h2>
+
+{% if buku %}
+    <ul>
+        {% for b in buku %}
+            <li>
+                <div class="card-image-container">
+                    <img src="{{ b.gambar.url }}" alt="{{ b.judul }}">
+                </div>
+                <strong>{{ b.judul }}</strong>
+                <div>Penulis: {{ b.penulis }}</div>
+                <div>Stok: {{ b.stok }}</div>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p class="empty">Belum ada buku di kategori ini.</p>
+{% endif %}
+
+</body>
+</html>

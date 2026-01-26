@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pinjam Barang</title>
+
+    <style>
+        body{
+            font-family: 'Poppins', sans-serif;
+            background: radial-gradient(circle at top, #1e293b, #020617);
+            margin: 0;
+            padding: 30px;
+        }
+
+        .judul {
+            text-align: center;
+            margin-bottom: 8px;
+            color: #f9fafb;
+            font-weight: 600;
+        }
+
+        .subjudul {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 14px;
+            margin-bottom: 28px;
+        }
+
+       .pinjam-container {
+    max-width: 760px;
+    margin: auto;
+    padding: 26px;
+    background: #ffffff;
+    border-radius: 18px;
+    box-shadow: 0 20px 45px rgba(0,0,0,0.35);
+}
+
+        .info-buku {
+            text-align: center;
+            font-size: 14px;
+            color: #374151;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 18px;
+        }
+
+        .detail {
+            font-size: 14px;
+            color: #4b5563;
+            margin-bottom: 4px;
+        }
+
+        .peringatan {
+            margin: 14px 0 20px;
+            padding: 14px;
+            background: #fff7ed;
+            border-left: 5px solid #f97316;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #7c2d12;
+            line-height: 1.6;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .form-row label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        input {
+            width: 100%;
+            padding: 11px;
+            border-radius: 10px;
+            border: 1px solid #d1d5db;
+            font-size: 14px;
+        }
+
+        canvas {
+            border:1px solid #d1d5db;
+            border-radius:10px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 14px;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+        }
+        .layout-2col {
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 24px;
+    margin-top: 20px;
+}
+
+.left-info {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    color: #7c2d12;
+    line-height: 1.6;
+}
+
+.left-info h4 {
+    margin: 0 0 10px;
+    font-size: 14px;
+}
+.checkbox-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 16px;
+    font-size: 13px;
+    color: #374151;
+}
+
+.checkbox-row input {
+    margin-top: 3px;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+.checkbox-row label {
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+
+    </style>
+</head>
+<body>
+
+<h2 class="judul">Pinjam Barang</h2>
+<p class="subjudul">Pastikan data yang diisi benar & sesuai</p>
+
+<div class="pinjam-container">
+
+    <div class="info-buku">
+        <strong>{{ barang.nama_barang }}</strong><br>
+        Kategori: {{ barang.kategori.nama }}
+    </div>
+
+    <p class="detail"><strong>Nama Barang:</strong> {{ barang.nama_barang }}</p>
+    <p class="detail"><strong>Tanggal Peminjaman:</strong> {{ tanggal_pinjam }}</p>
+    <p class="detail"><strong>Tanggal Pengembalian:</strong> {{ tanggal_kembali }}</p>
+
+ 
+    <form method="post" onsubmit="return confirmPinjam()">
+{% csrf_token %}
+
+<div class="layout-2col">
+
+    <!-- KIRI : KETERANGAN -->
+    <div class="left-info">
+        <h4>⚠️ Keterangan Peminjaman</h4>
+        Barang <strong>wajib dikembalikan tepat waktu</strong>.<br>
+        Jika tempat pengembalian <strong>tutup</strong>, dikembalikan
+        <strong>keesokan hari</strong>.<br><br>
+        <strong>Nomor WhatsApp & kelas harus asli</strong>
+        untuk keperluan konfirmasi.
+    </div>
+
+    <!-- KANAN : FORM -->
+    <div>
+
+        <div class="form-row">
+            <label>Nomor WhatsApp</label>
+            <input type="text" name="nomor_wa" required>
+        </div>
+
+        <div class="form-row">
+            <label>Kelas</label>
+            <input type="text" name="kelas" required>
+        </div>
+
+        <div class="form-row">
+            <label>Jurusan</label>
+            <input type="text" name="jurusan" required>
+        </div>
+
+        <div class="form-row">
+            <label>Tanda Tangan</label>
+            <canvas id="signature-pad" width="300" height="140"></canvas>
+        </div>
+
+        <input type="hidden" name="ttd_pinjam" id="ttd_pinjam">
+
+        <button type="button" onclick="clearSignature()" class="btn-secondary">
+            Hapus TTD
+        </button>
+
+        <button type="submit" id="submitBtn" disabled>
+            Pinjam Barang
+        </button>
+
+    </div>
+
+    <div class="checkbox-row">
+    <input type="checkbox" id="agreeCheck">
+    <label for="agreeCheck">
+        Saya menyatakan bahwa data yang saya isi <strong>benar & dapat dipertanggungjawabkan</strong>,
+        serta <strong>bersedia mengembalikan barang tepat waktu</strong>.
+    </label>
+</div>
+
+
+</div>
+</form>
+
+</div>
+
+<script>
+function confirmPinjam() {
+    if (!document.getElementById('ttd_pinjam').value) {
+        alert("Tanda tangan belum diisi!");
+        return false;
+    }
+    return confirm("Yakin ingin meminjam barang ini, Anda bisa meminjam nya jika di izinkan Petugas, Anda bisa melihat Status Peminjaman Anda di Status Peminjaman");
+}
+
+const canvas = document.getElementById('signature-pad');
+const ctx = canvas.getContext('2d');
+const submitBtn = document.getElementById('submitBtn');
+let drawing = false;
+
+canvas.addEventListener('mousedown', () => drawing = true);
+canvas.addEventListener('mouseup', () => {
+    drawing = false;
+    save();
+});
+canvas.addEventListener('mousemove', draw);
+
+function draw(e) {
+    if (!drawing) return;
+    ctx.lineWidth = 2;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = '#000';
+    ctx.lineTo(e.offsetX, e.offsetY);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(e.offsetX, e.offsetY);
+}
+
+function save() {
+    const data = canvas.toDataURL();
+    document.getElementById('ttd_pinjam').value = data;
+    submitBtn.disabled = false;
+}
+
+function clearSignature() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    document.getElementById('ttd_pinjam').value = '';
+    submitBtn.disabled = true;
+}
+
+const agreeCheck = document.getElementById('agreeCheck');
+
+function updateSubmitState() {
+    const ttdFilled = document.getElementById('ttd_pinjam').value !== '';
+    submitBtn.disabled = !(ttdFilled && agreeCheck.checked);
+}
+
+agreeCheck.addEventListener('change', updateSubmitState);
+
+// override enable submit agar tetap cek checkbox
+function save() {
+    const data = canvas.toDataURL();
+    document.getElementById('ttd_pinjam').value = data;
+    updateSubmitState();
+}
+
+function clearSignature() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    document.getElementById('ttd_pinjam').value = '';
+    submitBtn.disabled = true;
+}
+</script>
+
+</body>
+</html>

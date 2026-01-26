@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pantau Pengembalian</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                fontFamily: {
+                    poppins: ['Poppins', 'sans-serif']
+                }
+            }
+        }
+    }
+    </script>
+</head>
+
+<body class="font-poppins min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 p-8 text-white">
+
+<!-- HEADER -->
+<div class="max-w-6xl mx-auto mb-6">
+    <h2 class="text-2xl font-semibold tracking-wide">
+        📦 Pantau Pengembalian
+    </h2>
+    <p class="text-sm text-slate-400 mt-1">
+        Daftar barang yang telah dikembalikan oleh peminjam
+    </p>
+</div>
+
+<!-- TABLE CARD -->
+<div class="max-w-6xl mx-auto bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl overflow-hidden">
+
+    <table class="w-full text-sm">
+        <thead>
+            <tr class="bg-white/10 text-slate-200">
+                <th class="px-4 py-3 text-left font-semibold">Peminjam</th>
+                <th class="px-4 py-3 text-left font-semibold">Barang</th>
+                <th class="px-4 py-3 text-left font-semibold">Tgl Pinjam</th>
+                <th class="px-4 py-3 text-left font-semibold">Tgl Kembali</th>
+            </tr>
+        </thead>
+
+        <tbody class="divide-y divide-white/10">
+
+        {% for p in pengembalian %}
+        <tr class="hover:bg-white/5 transition">
+            <td class="px-4 py-3">
+                {{ p.user.username }}
+            </td>
+            <td class="px-4 py-3">
+                {{ p.barang }}
+            </td>
+            <td class="px-4 py-3 text-slate-300">
+                {{ p.tanggal_pinjam }}
+            </td>
+            <td class="px-4 py-3 text-emerald-400 font-semibold">
+                {{ p.tanggal_dikembalikan }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="4" class="text-center py-10 text-slate-400">
+                📭 Belum ada data pengembalian
+            </td>
+        </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>

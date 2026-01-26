@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Pengembalian Berhasil</title>
+    <style>
+        body{
+            font-family: Poppins, sans-serif;
+            background: linear-gradient(135deg,#020617,#0f172a);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            height:100vh;
+            color:#111;
+        }
+        .box{
+            background:#fff;
+            padding:30px;
+            border-radius:14px;
+            width:360px;
+            text-align:center;
+            box-shadow:0 15px 35px rgba(0,0,0,.3);
+        }
+        h2{ color:#16a34a }
+        .info{ margin:15px 0; font-size:14px }
+        .btn{
+            display:inline-block;
+            margin-top:20px;
+            padding:10px 18px;
+            background:#2563eb;
+            color:#fff;
+            border-radius:8px;
+            text-decoration:none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="box">
+    <h2>✅ Buku Berhasil Dikembalikan</h2>
+
+    <div class="info">
+        
+        Status: Menunggu konfirmasi petugas
+    </div>
+
+    <p>Silakan serahkan buku ke petugas perpustakaan.</p>
+
+    <a href="{% url 'pengembalian' %}" class="btn">Kembali</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Register Petugas</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card {
+            background: white;
+            width: 100%;
+            max-width: 380px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 12px;
+            border-radius: 8px;
+            border: 1px solid #d1d5db;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #2563eb;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .message {
+            margin-top: 10px;
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 13px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Register Petugas</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="username" placeholder="Username" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm" placeholder="Konfirmasi Password" required>
+        <button type="submit">Daftar</button>
+    </form>
+
+    <div class="login-link">
+        Sudah punya akun?
+        <a href="{% url 'library:login_petugas' %}">Login</a>
+    </div>
+
+    {% for message in messages %}
+        <div class="message">{{ message }}</div>
+    {% endfor %}
+</div>
+
+</body>
+</html>

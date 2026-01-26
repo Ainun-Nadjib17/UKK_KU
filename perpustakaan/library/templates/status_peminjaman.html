@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Status Peminjaman</title>
+
+<style>
+body{
+    font-family:Poppins,sans-serif;
+    background:#f3f4f6;
+    margin:0;padding:30px;
+}
+h2{text-align:center;margin-bottom:25px;color:#1f2937}
+.search-box{max-width:400px;margin:0 auto 25px}
+.search-box input{
+    width:100%;padding:12px 15px;border-radius:10px;
+    border:1px solid #d1d5db;font-size:14px;
+}
+.card{
+    background:#fff;border-radius:14px;padding:15px 20px;
+    margin-bottom:15px;box-shadow:0 10px 20px rgba(0,0,0,.06);
+}
+.status{
+    padding:4px 10px;border-radius:20px;
+    font-size:12px;font-weight:500;
+}
+.menunggu{background:#facc15;color:#78350f}
+.disetujui{background:#22c55e;color:#064e3b}
+.ditolak{background:#ef4444;color:#7f1d1d}
+</style>
+</head>
+
+<body>
+
+<h2>📦 Status Persetujuan Peminjaman</h2>
+
+<div class="search-box">
+    <input type="text" id="searchInput" placeholder="Cari barang..." onkeyup="searchData()">
+</div>
+
+{% for p in peminjaman %}
+<div class="card peminjaman-item">
+    <p><b>Barang:</b> {{ p.barang.nama_barang }}</p>
+    <p>
+        <b>Status:</b>
+        <span id="status-{{ p.id }}" class="status menunggu">Menunggu</span>
+    </p>
+</div>
+{% endfor %}
+
+<script>
+{% for p in peminjaman %}
+const status{{ p.id }}=localStorage.getItem("peminjaman_{{ p.id }}");
+if(status{{ p.id }}){
+    const el=document.getElementById("status-{{ p.id }}");
+    el.innerText=status{{ p.id }};
+    el.classList.remove("menunggu");
+    el.classList.add(status{{ p.id }});
+}
+{% endfor %}
+
+function searchData(){
+    let input=document.getElementById("searchInput").value.toLowerCase();
+    let items=document.getElementsByClassName("peminjaman-item");
+    for(let i=0;i<items.length;i++){
+        items[i].style.display=items[i].innerText.toLowerCase().includes(input)?"":"none";
+    }
+}
+</script>
+
+</body>
+</html>

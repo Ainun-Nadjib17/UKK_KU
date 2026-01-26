@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Daftar Buku</title>
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif']
+            }
+        }
+    }
+}
+</script>
+</head>
+
+<body class="font-poppins min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white p-8">
+
+<!-- ===== HEADER ===== -->
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8">
+    <h2 class="text-xl font-semibold tracking-wide">📚 Daftar Buku</h2>
+
+    <div class="flex gap-3 items-center">
+        <!-- SEARCH -->
+        <input id="searchInput"
+               type="text"
+               placeholder="Cari buku..."
+               class="px-4 py-2 rounded-xl bg-white/10 backdrop-blur
+                      text-sm outline-none border border-white/10
+                      focus:border-sky-400 focus:ring-2 focus:ring-sky-400/30
+                      transition w-56">
+
+        <a href="/dashboard"
+           class="px-5 py-2 rounded-xl bg-white/10 backdrop-blur font-semibold
+                  hover:bg-sky-400/30 hover:-translate-y-0.5 transition">
+            ← Dashboard
+        </a>
+    </div>
+</div>
+
+<!-- ===== LOADING SKELETON ===== -->
+<div id="loading" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+    {% for i in "1234" %}
+    <div class="p-4 rounded-2xl bg-white/5 animate-pulse">
+        <div class="h-32 bg-white/10 rounded-xl mb-4"></div>
+        <div class="h-4 bg-white/10 rounded mb-2"></div>
+        <div class="h-3 bg-white/10 rounded w-2/3"></div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- ===== GRID ===== -->
+<div id="bukuContainer"
+     class="hidden grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+
+{% for b in barang %}
+<div class="buku-card group flex gap-4 p-4 rounded-2xl bg-white/5 backdrop-blur-xl
+            shadow-[0_15px_35px_rgba(0,0,0,0.45)]
+            hover:-translate-y-1 hover:scale-[1.02]
+            hover:shadow-[0_25px_50px_rgba(56,189,248,0.25)]
+            transition duration-300">
+
+    <!-- IMAGE -->
+    <div class="w-[90px] h-[120px] flex-shrink-0 rounded-xl bg-slate-950 p-2
+                flex items-center justify-center
+                group-hover:ring-2 group-hover:ring-sky-400/40 transition">
+        {% if b.gambar %}
+        <img src="{{ b.gambar.url }}"
+             alt="{{ b.nama_barang }}"
+             loading="lazy"
+             class="w-full h-full object-contain opacity-0 transition-opacity duration-700">
+        {% else %}
+        <img src="https://images.unsplash.com/photo-1524995997946-a1c2e315a42f"
+             loading="lazy"
+             class="w-full h-full object-contain opacity-0 transition-opacity duration-700">
+        {% endif %}
+    </div>
+
+    <!-- CONTENT -->
+    <div class="flex flex-col flex-1">
+        <h4 class="nama-buku text-sm font-semibold leading-tight
+                   group-hover:text-sky-400 transition">
+            {{ b.nama_barang }}
+        </h4>
+
+        <p class="text-xs text-sky-400 mt-1">
+            Kategori: {{ b.kategori.nama }}
+        </p>
+
+        <p class="text-xs font-semibold text-emerald-400 mt-2">
+            Stok: {{ b.stok }}
+        </p>
+
+        <!-- ACTION -->
+        <div class="mt-auto flex gap-2 pt-3">
+            <a href="{% url 'library:pinjam' b.id %}"
+               class="flex-1 text-center text-xs font-semibold py-2 rounded-lg
+                      bg-gradient-to-br from-emerald-500 to-emerald-400 text-emerald-950
+                      hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(34,197,94,0.45)]
+                      transition">
+                Pinjam
+            </a>
+
+            <a href="{% url 'library:ulasan' b.id %}"
+               class="flex-1 text-center text-xs font-semibold py-2 rounded-lg
+                      bg-gradient-to-br from-sky-400 to-sky-300 text-slate-950
+                      hover:-translate-y-0.5 hover:shadow-[0_8px_20px_rgba(56,189,248,0.45)]
+                      transition">
+                Ulasan
+            </a>
+        </div>
+    </div>
+</div>
+{% empty %}
+<p class="text-slate-400">Tidak ada buku</p>
+{% endfor %}
+
+</div>
+
+<!-- ===== SCRIPT ===== -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* IMAGE FADE */
+    document.querySelectorAll('img').forEach(img=>{
+        if(img.complete) img.classList.remove('opacity-0');
+        else img.addEventListener('load',()=>img.classList.remove('opacity-0'));
+    });
+
+    /* LOADING EFFECT */
+    setTimeout(()=>{
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('bukuContainer').classList.remove('hidden');
+    }, 800);
+
+    /* SEARCH */
+    const searchInput = document.getElementById('searchInput');
+    const cards = document.querySelectorAll('.buku-card');
+
+    searchInput.addEventListener('input', ()=>{
+        const value = searchInput.value.toLowerCase();
+
+        cards.forEach(card=>{
+            const nama = card.querySelector('.nama-buku')
+                             .innerText.toLowerCase();
+            card.style.display = nama.includes(value) ? 'flex' : 'none';
+        });
+    });
+
+});
+</script>
+
+</body>
+</html>

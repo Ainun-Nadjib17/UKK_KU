@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Ulasan Buku: {{ buku.judul }}</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #e2e8f0;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-attachment: fixed;
+}
+
+.container {
+    background: rgba(30, 41, 59, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: 
+        0 20px 60px -20px rgba(0,0,0,0.6),
+        inset 0 1px 1px rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.07);
+    transition: transform 0.35s ease;
+}
+
+.container:hover {
+    transform: translateY(-6px);
+}
+
+h2 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 2.2rem;
+    background: linear-gradient(90deg, #60a5fa, #a78bfa, #f472b6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+}
+
+/* Styling form Django as_p */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4rem;
+}
+
+form p {
+    margin: 0;
+}
+
+form label {
+    display: block;
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #cbd5e1;
+}
+
+form input,
+form textarea,
+form select {
+    width: 100%;
+    padding: 14px 16px;
+    border: none;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    color: #f1f5f9;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    resize: vertical;
+    min-height: 48px;
+}
+
+form textarea {
+    min-height: 140px;
+}
+
+form input:focus,
+form textarea:focus,
+form select:focus {
+    outline: none;
+    background: rgba(255,255,255,0.13);
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.25);
+}
+
+form input::placeholder,
+form textarea::placeholder {
+    color: #94a3b8;
+}
+
+/* Tombol Kirim */
+button[type="submit"] {
+    margin-top: 1.5rem;
+    padding: 14px 24px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: center;
+    min-width: 180px;
+}
+
+button[type="submit"]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(139, 92, 246, 0.35);
+    background: linear-gradient(90deg, #2563eb, #7c3aed);
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .container {
+        padding: 32px 24px;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Ulasan Barang {{ buku.judul }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Kirim</button>
+    </form>
+</div>
+
+</body>
+</html>
