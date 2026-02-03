@@ -1,188 +1,70 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<title>Register</title>
+    <meta charset="UTF-8">
+    <title>Register</title>
 
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-/* RESET */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-/* BODY */
-body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-    color: #e2e8f0;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background-attachment: fixed;
-}
-
-/* CONTAINER */
-.form-container {
-    background: rgba(30, 41, 59, 0.75);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-radius: 16px;
-    padding: 40px 32px;
-    width: 100%;
-    max-width: 420px;
-    box-shadow: 
-        0 20px 50px -15px rgba(0, 0, 0, 0.6),
-        inset 0 1px 1px rgba(255,255,255,0.05);
-    border: 1px solid rgba(255,255,255,0.08);
-    transition: transform 0.3s ease;
-}
-
-.form-container:hover {
-    transform: translateY(-4px);
-}
-
-/* TITLE */
-h1 {
-    text-align: center;
-    font-size: 1.9rem;
-    font-weight: 700;
-    margin-bottom: 1rem;
-    background: linear-gradient(90deg, #a78bfa, #f472b6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-/* NOTE */
-.register-note {
-    margin-bottom: 22px;
-    padding: 14px 16px;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: #e5e7eb;
-    background: linear-gradient(
-        135deg,
-        rgba(167,139,250,0.15),
-        rgba(236,72,153,0.12)
-    );
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.12);
-    text-align: center;
-}
-
-.register-note strong {
-    color: #f472b6;
-    font-weight: 600;
-}
-
-/* FORM */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1.2rem;
-}
-
-/* INPUT */
-input {
-    width: 100%;
-    padding: 14px 16px;
-    border: none;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.08);
-    color: #f1f5f9;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-}
-
-input::placeholder {
-    color: #94a3b8;
-}
-
-input:focus {
-    outline: none;
-    background: rgba(255,255,255,0.12);
-    box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.25);
-}
-
-/* BUTTON */
-button {
-    margin-top: 1rem;
-    padding: 14px;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: white;
-    background: linear-gradient(90deg, #8b5cf6, #ec4899);
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 12px 30px rgba(236, 72, 153, 0.35);
-    background: linear-gradient(90deg, #7c3aed, #db2777);
-}
-
-/* LOGIN LINK */
-.login-link {
-    margin-top: 18px;
-    text-align: center;
-    font-size: 0.9rem;
-    color: #cbd5f5;
-}
-
-.login-link a {
-    color: #a78bfa;
-    font-weight: 600;
-    text-decoration: none;
-    transition: color 0.3s ease;
-}
-
-.login-link a:hover {
-    color: #f472b6;
-    text-decoration: underline;
-}
-
-/* RESPONSIVE */
-@media (max-width: 480px) {
-    .form-container {
-        padding: 32px 24px;
-    }
-    
-    h1 {
-        font-size: 1.7rem;
-    }
-}
-</style>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+        }
+    </style>
 </head>
-<body>
+<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-5">
 
-<div class="form-container">
-    <h1>Register</h1>
+    <div class="w-full max-w-md rounded-2xl bg-slate-800/80 backdrop-blur-xl border border-white/10 shadow-2xl p-10 transition hover:-translate-y-1">
 
-    <div class="register-note">
-        📘 Gunakan <strong>nama asli</strong> saat mendaftar,<br>
-        karena akun ini akan digunakan untuk <strong>peminjaman buku</strong>.
+        <h1 class="text-center text-3xl font-bold mb-4 bg-gradient-to-r from-violet-400 to-pink-400 bg-clip-text text-transparent">
+            Register
+        </h1>
+
+        <div class="mb-6 text-center text-sm leading-relaxed text-slate-200 bg-gradient-to-br from-violet-500/15 to-pink-500/10 border border-white/10 rounded-xl px-4 py-3">
+            📘 Gunakan <span class="font-semibold text-pink-400">nama asli</span> saat mendaftar,<br>
+            karena akun ini akan digunakan untuk <span class="font-semibold text-pink-400">peminjaman buku</span>.
+        </div>
+
+        <form method="post" class="flex flex-col gap-5">
+            {% csrf_token %}
+
+            <input
+                name="username"
+                placeholder="Username"
+                required
+                autocomplete="username"
+                class="w-full rounded-xl px-4 py-3 bg-white/10 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition"
+            >
+
+            <input
+                name="password"
+                type="password"
+                placeholder="Password"
+                required
+                autocomplete="new-password"
+                class="w-full rounded-xl px-4 py-3 bg-white/10 text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400/50 transition"
+            >
+
+            <button
+                type="submit"
+                class="mt-2 rounded-xl py-3 font-semibold text-white bg-gradient-to-r from-violet-500 to-pink-500 hover:from-violet-600 hover:to-pink-600 transition shadow-lg hover:shadow-pink-500/30 hover:-translate-y-0.5"
+            >
+                Register
+            </button>
+        </form>
+
+        <div class="mt-6 text-center text-sm text-slate-300">
+            Sudah punya akun?
+            <a href="/" class="font-semibold text-violet-400 hover:text-pink-400 transition underline-offset-4 hover:underline">
+                Login di sini
+            </a>
+        </div>
+
     </div>
-
-    <form method="post">
-        {% csrf_token %}
-        <input name="username" placeholder="Username" required autocomplete="username">
-        <input name="password" type="password" placeholder="Password" required autocomplete="new-password">
-        <button type="submit">Register</button>
-    </form>
-
-    <div class="login-link">
-        Sudah punya akun?  
-        <a href="/">Login di sini</a>
-    </div>
-</div>
 
 </body>
 </html>

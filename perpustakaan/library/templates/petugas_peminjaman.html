@@ -5,11 +5,9 @@
 <title>Petugas - Verifikasi Peminjaman</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Tailwind CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
 
 <style>
-/* Skeleton loading */
 .skeleton{
     background:linear-gradient(90deg,#e5e7eb 25%,#f3f4f6 37%,#e5e7eb 63%);
     background-size:400% 100%;
@@ -19,38 +17,47 @@
     0%{background-position:100% 0}
     100%{background-position:-100% 0}
 }
+
+@media print {
+    body { background: white !important; }
+    #searchInput, button, form { display: none !important; }
+    .peminjaman-item {
+        box-shadow: none !important;
+        border: 1px solid #ddd;
+        break-inside: avoid;
+    }
+}
 </style>
 </head>
 
 <body class="bg-gradient-to-br from-slate-100 to-indigo-100 min-h-screen p-6">
 
-<!-- HEADER -->
 <h2 class="text-2xl font-bold text-center text-slate-800 mb-6">
     📋 Verifikasi Peminjaman
 </h2>
 
-<!-- PREVIEW DATA -->
+<!-- COUNTER -->
 <div class="max-w-4xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
     <div class="bg-white rounded-xl shadow p-4 text-center">
         <p class="text-sm text-gray-500">Total</p>
-        <p class="text-2xl font-bold text-indigo-600">{{ peminjaman|length }}</p>
+        <p id="totalCount" class="text-2xl font-bold text-indigo-600">0</p>
     </div>
     <div class="bg-white rounded-xl shadow p-4 text-center">
         <p class="text-sm text-gray-500">Menunggu</p>
-        <p class="text-2xl font-bold text-yellow-500">⏳</p>
+        <p id="menungguCount" class="text-2xl font-bold text-yellow-500">0</p>
     </div>
     <div class="bg-white rounded-xl shadow p-4 text-center">
         <p class="text-sm text-gray-500">Disetujui</p>
-        <p class="text-2xl font-bold text-green-500">✔</p>
+        <p id="setujuCount" class="text-2xl font-bold text-green-500">0</p>
     </div>
     <div class="bg-white rounded-xl shadow p-4 text-center">
         <p class="text-sm text-gray-500">Ditolak</p>
-        <p class="text-2xl font-bold text-red-500">✖</p>
+        <p id="tolakCount" class="text-2xl font-bold text-red-500">0</p>
     </div>
 </div>
 
 <!-- SEARCH -->
-<div class="max-w-md mx-auto mb-6">
+<div class="max-w-md mx-auto mb-4">
     <input id="searchInput"
         type="text"
         placeholder="Cari nama / barang / kelas..."
@@ -58,28 +65,29 @@
         class="w-full px-4 py-3 rounded-xl shadow border focus:ring-2 focus:ring-indigo-400 outline-none">
 </div>
 
+<!-- CETAK -->
+<div class="max-w-4xl mx-auto mb-6 flex justify-end">
+    <button onclick="cetakLaporan()"
+        class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl shadow">
+        🖨 Cetak Laporan
+    </button>
+</div>
+
 <!-- LIST -->
 <div id="listPeminjaman" class="max-w-4xl mx-auto space-y-4">
 
-<!-- LOADING SKELETON -->
 <div id="loading">
     <div class="bg-white rounded-xl p-5 skeleton h-28"></div>
     <div class="bg-white rounded-xl p-5 skeleton h-28 mt-4"></div>
 </div>
 
 {% for p in peminjaman %}
-<div class="peminjaman-item hidden bg-white rounded-2xl p-5 shadow-lg
-            transition transform hover:-translate-y-1 hover:shadow-xl"
-     data-id="{{ p.id }}"
-     data-nama="{{ p.user.username }}"
-     data-barang="{{ p.barang.nama_barang }}"
-     data-kelas="{{ p.kelas }}">
+<div class="peminjaman-item hidden bg-white rounded-2xl p-5 shadow-lg"
+     data-id="{{ p.id }}">
 
     <div class="flex justify-between items-center mb-2">
-        <h3 class="font-semibold text-lg text-slate-800">
-            {{ p.user.username }}
-        </h3>
-        <span class="text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
+        <h3 class="font-semibold text-lg">{{ p.user.username }}</h3>
+        <span class="status-badge text-xs bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full">
             Menunggu
         </span>
     </div>
@@ -93,65 +101,97 @@
     <div class="flex gap-3 mt-4">
         <form method="post"
               action="{% url 'library:konfirmasi_petugas' p.id %}"
-              onsubmit="handleAksi(this,'disetujui')">
+              onsubmit="return handleAksi(this,'disetujui')">
             {% csrf_token %}
-            <button
-                class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-xl text-sm transition">
+            <button class="bg-green-500 text-white px-4 py-2 rounded-xl text-sm">
                 ✅ Konfirmasi
             </button>
         </form>
 
         <form method="post"
               action="{% url 'library:tolak_petugas' p.id %}"
-              onsubmit="handleAksi(this,'ditolak')">
+              onsubmit="return handleAksi(this,'ditolak')">
             {% csrf_token %}
-            <button
-                class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-xl text-sm transition">
+            <button class="bg-red-500 text-white px-4 py-2 rounded-xl text-sm">
                 ❌ Tolak
             </button>
         </form>
     </div>
 </div>
-{% empty %}
-<p class="text-center text-gray-500">Tidak ada peminjaman.</p>
 {% endfor %}
-
 </div>
 
 <script>
-/* LOADING EFFECT */
 window.onload = () => {
     document.getElementById("loading")?.remove();
     document.querySelectorAll(".peminjaman-item")
         .forEach(el => el.classList.remove("hidden"));
+    updateCounter();
+};
+
+function updateCounter() {
+    let disetujui = 0;
+    let ditolak = 0;
+    let menunggu = 0;
+
+    for (let key in localStorage) {
+        if (key.startsWith("peminjaman_")) {
+            const status = localStorage.getItem(key);
+            if (status === "disetujui") disetujui++;
+            else if (status === "ditolak") ditolak++;
+        }
+    }
+
+    // yang masih tampil = menunggu
+    menunggu = document.querySelectorAll(".peminjaman-item").length;
+
+    const total = disetujui + ditolak + menunggu;
+
+    totalCount.innerText = total;
+    menungguCount.innerText = menunggu;
+    setujuCount.innerText = disetujui;
+    tolakCount.innerText = ditolak;
 }
 
-/* ACTION */
-function handleAksi(form,status){
-    const card=form.closest(".peminjaman-item");
-    const id=card.dataset.id;
+function handleAksi(form, status) {
+    const card = form.closest(".peminjaman-item");
+    const id = card.dataset.id;
 
-    localStorage.setItem("peminjaman_"+id,status);
+    // simpan status
+    localStorage.setItem("peminjaman_" + id, status);
 
-    const notif={
-        type:"peminjaman",
-        nama:card.dataset.nama,
-        barang:card.dataset.barang,
-        kelas:card.dataset.kelas,
-        status:status,
-        waktu:new Date().toLocaleTimeString()
-    };
-    localStorage.setItem("realtime_notif",JSON.stringify(notif));
-}
-
-/* SEARCH */
-function searchData(){
-    const input=document.getElementById("searchInput").value.toLowerCase();
-    document.querySelectorAll(".peminjaman-item").forEach(item=>{
-        item.style.display=item.innerText.toLowerCase().includes(input)
-            ? "block":"none";
+    // disable tombol
+    card.querySelectorAll("button").forEach(btn => {
+        btn.disabled = true;
+        btn.classList.add("opacity-60", "cursor-not-allowed");
     });
+
+    // update badge & counter SEKARANG
+    updateCounter();
+
+    // submit ke Django SETELAH UI update
+    setTimeout(() => {
+        form.submit();
+    }, 300); // kasih jeda biar UI kebaca
 }
+
+
+function cetakLaporan(){
+    const judul = document.createElement("h1");
+    judul.innerText = "LAPORAN PEMINJAMAN BARANG";
+    judul.style.textAlign = "center";
+    judul.style.marginBottom = "20px";
+    judul.style.fontSize = "20px";
+    judul.style.fontWeight = "bold";
+    document.body.prepend(judul);
+    window.print();
+    setTimeout(()=>judul.remove(),500);
+}
+
+
+
+
+
 </script>
 
 </body>

@@ -1,171 +1,90 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Pengembalian Berhasil</title>
-    <style>
-        body {
-            font-family: Poppins, sans-serif;
-            background: linear-gradient(135deg, #020617, #0f172a);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .box {
-            background: white;
-            padding: 35px 30px;
-            border-radius: 18px;
-            max-width: 460px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 20px 45px rgba(0,0,0,.4);
-            animation: fadeUp .6s ease;
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(25px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .icon {
-            font-size: 60px;
-            color: #16a34a;
-            margin-bottom: 15px;
-        }
-
-        h2 {
-            margin-bottom: 10px;
-            color: #1f2937;
-        }
-
-        p {
-            font-size: 14px;
-            color: #4b5563;
-        }
-
-        .list-barang {
-            background: #f1f5f9;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: left;
-            margin: 20px 0;
-            font-size: 14px;
-        }
-
-        .list-barang li {
-            margin: 6px 0;
-        }
-
-        .info {
-            background: #ecfeff;
-            padding: 14px;
-            border-radius: 10px;
-            font-size: 13px;
-            color: #0f172a;
-            margin-bottom: 25px;
-        }
-
-        .btn {
-            display: inline-block;
-            padding: 10px 18px;
-            background: #2563eb;
-            color: white;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 14px;
-            transition: .3s;
-            margin: 5px;
-            cursor: pointer;
-            border: none;
-        }
-
-        .btn:hover {
-            background: #1e40af;
-            transform: scale(1.05);
-        }
-    </style>
-</head>
-<body>
+<!-- Tailwind CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
 
 {% if peminjaman %}
-<div class="box">
-    <div class="icon">✅</div>
-    <h2>Pengembalian Berhasil</h2>
-    <p>Barang berikut telah dikembalikan:</p>
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-4">
 
-    <ul class="list-barang">
+    <div class="w-full max-w-lg bg-white/95 backdrop-blur rounded-2xl shadow-2xl p-8 animate-fade-in">
+
+        <!-- ICON -->
+        <div class="flex justify-center mb-4">
+            <div class="w-16 h-16 flex items-center justify-center rounded-full bg-green-100 text-green-600 text-3xl shadow">
+                ✓
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <h2 class="text-2xl font-bold text-center text-slate-800">
+            Pengembalian Berhasil
+        </h2>
+        <p class="text-center text-slate-500 text-sm mt-1">
+            Barang berikut telah dikembalikan
+        </p>
+
+        <!-- LIST BARANG -->
+        <ul class="mt-6 bg-slate-100 rounded-xl p-4 space-y-2 text-sm text-slate-700">
+            {% for pinjam in peminjaman %}
+            <li class="flex items-center gap-2">
+                <span class="text-blue-600">📘</span>
+                <span>{{ pinjam.barang.nama_barang }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- INFO -->
+        <div class="mt-5 bg-cyan-50 border border-cyan-200 text-cyan-900 text-sm rounded-xl p-4">
+            Silakan lapor ke <strong>petugas</strong> untuk verifikasi pengembalian.
+        </div>
+
+        <!-- FORM -->
         {% for pinjam in peminjaman %}
-            <li>📘 {{ pinjam.barang.nama_barang }}</li>
+        <form method="post"
+              action="{% url 'library:proses_pengembalian' pinjam.id %}"
+              enctype="multipart/form-data"
+              class="mt-6 space-y-3">
+            {% csrf_token %}
+
+            <label class="block text-sm font-medium text-slate-700">
+                Upload Foto Bukti
+            </label>
+
+            <input type="file"
+                   name="bukti"
+                   accept="image/*"
+                   required
+                   class="w-full text-sm file:mr-4 file:py-2 file:px-4
+                          file:rounded-lg file:border-0
+                          file:bg-blue-600 file:text-white
+                          hover:file:bg-blue-700
+                          cursor-pointer border rounded-lg p-2">
+
+            <button type="submit"
+                    class="w-full py-3 rounded-xl bg-blue-600 text-white font-semibold
+                           hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl">
+                Konfirmasi ke Admin
+            </button>
+        </form>
         {% endfor %}
-    </ul>
 
-    <div class="info">
-        Silakan lapor ke <strong>petugas</strong>
-        untuk verifikasi dan memastikan bahwa anda telah mengembalikan
+        <!-- BACK -->
+        <a href="{% url 'library:dashboard' %}"
+           class="mt-4 block text-center text-sm font-medium text-slate-600 hover:text-blue-600 transition">
+            ← Kembali ke Dashboard
+        </a>
     </div>
-
-    <a href="#" onclick="downloadStruk()" class="btn">
-        Download Bukti Pengembalian
-    </a>
-
-    {% for pinjam in peminjaman %}
-    <form method="post" action="{% url 'library:proses_pengembalian' pinjam.id %}" style="display:inline;">
-        {% csrf_token %}
-        <button type="submit" class="btn">
-            Konfirmasi ke Admin
-        </button>
-    </form>
-    {% endfor %}
-
-    <a href="{% url 'library:dashboard' %}" class="btn">
-        Kembali ke Dashboard
-    </a>
 </div>
-{% else %}
-<p style="color:white;">Tidak ada peminjaman yang perlu dikembalikan.</p>
-{% endif %}
 
-<script>
-function downloadStruk() {
-    const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 450;
-    const ctx = canvas.getContext('2d');
-
-    ctx.fillStyle = '#ffffff';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-    ctx.fillStyle = '#111827';
-    ctx.font = 'bold 28px sans-serif';
-    ctx.fillText('BUKTI PENGEMBALIAN BUKU', 140, 60);
-
-    ctx.strokeStyle = '#9ca3af';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(50, 80);
-    ctx.lineTo(750, 80);
-    ctx.stroke();
-
-    ctx.font = '16px sans-serif';
-    const now = new Date();
-    const tanggal = now.toLocaleDateString('id-ID') + ' ' + now.toLocaleTimeString('id-ID');
-    ctx.fillText(`Tanggal Pengembalian : ${tanggal}`, 70, 140);
-    ctx.fillText(`Status               : Menunggu Konfirmasi Petugas`, 70, 180);
-    ctx.fillText(`Keterangan           : Buku telah dikembalikan`, 70, 220);
-
-    ctx.font = '14px sans-serif';
-    ctx.fillStyle = '#374151';
-    ctx.fillText('Silakan tunjukkan bukti ini kepada petugas perpustakaan', 70, 300);
-
-    const link = document.createElement('a');
-    link.download = 'bukti_pengembalian.png';
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+<!-- Animasi -->
+<style>
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
-</script>
+.animate-fade-in {
+    animation: fade-in .6s ease-out;
+}
+</style>
 
-</body>
-</html>
+{% else %}
+<p class="text-white text-center mt-20">Tidak ada peminjaman.</p>
+{% endif %}
